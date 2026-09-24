@@ -12,10 +12,12 @@
 // the schematic's R1 net from D2 to D0 to match.
 // D8/D9 UART roles match the schematic's crossover wiring (D8 = MCU RX, fed
 // by DFPlayer TX; D9 = MCU TX, feeding DFPlayer RX).
+// Grouped for tidiness: D0/D1 = MOSFET gates, D3 = wake button, D4/D5 = I2C,
+// D8/D9 = UART.
 // ---------------------------------------------------------------------------
-#define WAKE_BUTTON_PIN    2   // D1: SW1 to GND; wakes MCU via ext0 (active LOW)
 #define SENSOR_MOSFET_PIN  1   // D0: R1 -> Q1 gate, switches GY-33 power
-#define PLAYER_MOSFET_PIN  4   // D3: R3 -> Q2 gate, switches DFPlayer power
+#define PLAYER_MOSFET_PIN  2   // D1: R3 -> Q2 gate, switches DFPlayer power
+#define WAKE_BUTTON_PIN    4   // D3: SW1 to GND; wakes MCU via ext0 (active LOW)
 #define I2C_SDA_PIN        5   // D4: TCS34725 SDA
 #define I2C_SCL_PIN        6   // D5: TCS34725 SCL
 #define DFPLAYER_RX_PIN    7   // D8: ESP32 RX <- DFPlayer TXD

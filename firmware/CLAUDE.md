@@ -27,14 +27,16 @@ There is no `loop()` logic. The device spends nearly all its time in ESP32-S3 de
 | Silkscreen | GPIO | Purpose |
 |---|---|---|
 | D0 | GPIO1 | R1 → Q1 (AO3400) gate — GY-33 power switch |
-| D1 | GPIO2 | Momentary switch to GND — wake from deep sleep (ext0) |
-| D3 | GPIO4 | R3 → Q2 (AO3400) gate — DFPlayer power switch |
+| D1 | GPIO2 | R3 → Q2 (AO3400) gate — DFPlayer power switch |
+| D3 | GPIO4 | Momentary switch to GND — wake from deep sleep (ext0) |
 | D4 | GPIO5 | I2C SDA to GY-33/TCS34725 |
 | D5 | GPIO6 | I2C SCL to GY-33/TCS34725 |
 | D8 | GPIO7 | UART RX from DFPlayer TXD |
 | D9 | GPIO8 | UART TX to DFPlayer RXD |
 
-Note: the sensor MOSFET gate was moved from the schematic's original D2 (GPIO3) to D0 (GPIO1), since GPIO3 is one of the ESP32-S3's four strapping pins (0, 3, 45, 46), sampled at boot/reset to configure chip behavior. D0/GPIO1 has no competing native function. The schematic's R1 net and the `XIAO_ESP32S3` symbol's pin 4 have both been updated from `D2` to `D0` to match.
+Pins were deliberately grouped: D0/D1 are the two MOSFET gates, D3 is the wake button, D4/D5 are I2C, D8/D9 are UART.
+
+Note: the sensor MOSFET gate was moved from the schematic's original D2 (GPIO3) to D0 (GPIO1), since GPIO3 is one of the ESP32-S3's four strapping pins (0, 3, 45, 46), sampled at boot/reset to configure chip behavior. D0/GPIO1 has no competing native function. The schematic's R1 net and the `XIAO_ESP32S3` symbol's pin 4 have both been updated from `D2` to `D0` to match. The wake button and DFPlayer-MOSFET-gate nets were later swapped between D1 and D3 (schematic net labels `D1`/`D3_BTN`) purely to group pins more logically; no strapping-pin or electrical concerns were involved in that swap.
 
 **Still-unconfirmed values** (called out with comments in `firmware.ino`, not from the schematic):
 - MOSFET on/off polarity — assumes each AO3400 is a low-side switch where gate HIGH powers the device on; invert `MOSFET_ON`/`MOSFET_OFF` if wired differently.
