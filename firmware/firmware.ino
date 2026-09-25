@@ -52,6 +52,10 @@
 #define WHITE_MIN_VALUE      0.80f  // unsaturated and at least this bright -> White, else Gray
 #define WHITE_MAX_SATURATION 0.15f  // channels this close together -> White/Gray/Black
 #define PLAY_TIMEOUT_MS   5000
+// Spoken calibration prompts, in the SD card's /mp3 folder.
+#define TRACK_CAL_WHITE   11    // 0011.mp3: "point at white and press the button"
+#define TRACK_CAL_BLACK   12    // 0012.mp3: "point at black and press the button"
+#define TRACK_CAL_DONE    13    // 0013.mp3: "calibration complete"
 #define CAL_STEP_TIMEOUT_MS 30000 // abort calibration if SW1 isn't pressed in time, to save battery
 #define CAL_SETTLE_MS     500     // time for the GY-33 to finish white balance -- untested guess
 #define DEBOUNCE_MS       30
@@ -64,6 +68,7 @@ HardwareSerial sensorSerial(2);
 GY33_UART sensor(sensorSerial);
 HardwareSerial dfSerial(1);
 DFRobotDFPlayerMini player;
+bool playerReady = false;
 Preferences prefs;
 
 // Raw reading of the white calibration target, loaded from NVS at boot.
@@ -71,8 +76,8 @@ GY33_Raw whitePoint = {0, 0, 0, 0};
 bool haveWhitePoint = false;
 
 // Maps a classifyColour() name to a track number on the DFPlayer's SD card.
-// Track files must exist as 0001.mp3, 0002.mp3, etc. in this same order --
-// update once the audio files are actually recorded/numbered.
+// Track files live in the card's /mp3 folder as 0001.mp3, 0002.mp3, etc.
+// (see playTrack()).
 int trackForColour(const char* colour) {
   if (strcmp(colour, "Black") == 0)  return 1;
   if (strcmp(colour, "White") == 0)  return 2;
@@ -202,6 +207,42 @@ void waitForPlaybackToFinish() {
   Serial.println("Playback timed out.");
 }
 
+// Powers the DFPlayer and brings up its UART. Sets playerReady on success.
+void startPlayer() {
+  powerPlayerOn();
+  dfSerial.begin(9600, SERIAL_8N1, DFPLAYER_RX_PIN, DFPLAYER_TX_PIN);
+  playerReady = player.begin(dfSerial);
+  if (playerReady) {
+    player.volume(PLAYER_VOLUME);
+  } else {
+    Serial.println("DFPlayer init failed.");
+  }
+}
+
+void stopPlayer() {
+  // Release the TX pin before cutting the player's ground, as for the sensor.
+  dfSerial.end();
+  powerPlayerOff();
+  playerReady = false;
+}
+
+// Plays /mp3/NNNN.mp3 on the SD card and blocks until it finishes. Does
+// nothing if the player failed to start, so callers can carry on without audio.
+// playMp3Folder() picks the file by its name; play() would instead use the
+// order files were copied onto the card.
+void playTrack(int track) {
+  if (!playerReady) return;
+  // Discard any stale messages, e.g. the "finished" event of a previous
+  // prompt that arrived while waiting for SW1 (some modules also send it
+  // twice). Otherwise waitForPlaybackToFinish() returns on the old event at
+  // once, and the caller may cut power before this track is heard.
+  while (player.available()) {
+    player.readType();
+  }
+  player.playMp3Folder(track);
+  waitForPlaybackToFinish();
+}
+
 bool buttonHeld() {
   return digitalRead(WAKE_BUTTON_PIN) == LOW;
 }
@@ -256,14 +297,15 @@ void saveCalibrationPoint(const char* key, const GY33_Raw& point) {
 }
 
 // Interactive calibration, entered by holding SW1 at power-up. Expects the
-// sensor to already be powered and initialised. Each step waits for a press
-// of SW1 with the wand aimed at the appropriate target.
+// sensor and DFPlayer to already be started. Each step plays a spoken prompt,
+// then waits for a press of SW1 with the wand aimed at the target.
 void runCalibration() {
   Serial.println("Calibration mode. Release SW1.");
   while (buttonHeld()) {}
   delay(DEBOUNCE_MS);
 
   Serial.println("Aim at a WHITE target and press SW1.");
+  playTrack(TRACK_CAL_WHITE);
   if (!waitForButtonPress(CAL_STEP_TIMEOUT_MS)) {
     Serial.println("Calibration timed out.");
     return;
@@ -281,6 +323,7 @@ void runCalibration() {
   Serial.printf("White point set: r=%u g=%u b=%u c=%u\n", white.r, white.g, white.b, white.c);
 
   Serial.println("Aim at a BLACK target and press SW1.");
+  playTrack(TRACK_CAL_BLACK);
   if (!waitForButtonPress(CAL_STEP_TIMEOUT_MS)) {
     Serial.println("Calibration timed out.");
     return;
@@ -294,6 +337,7 @@ void runCalibration() {
   Serial.printf("Black point set: r=%u g=%u b=%u c=%u\n", black.r, black.g, black.b, black.c);
 
   Serial.println("Calibration complete.");
+  playTrack(TRACK_CAL_DONE);
 }
 
 void setup() {
@@ -316,7 +360,9 @@ void setup() {
   bool coldBoot = esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_EXT0;
   if (coldBoot && buttonHeld()) {
     startSensor();
+    startPlayer();
     runCalibration();
+    stopPlayer();
     stopSensor();
     goToSleep();
   }
@@ -333,16 +379,9 @@ void setup() {
   // --- Power the DFPlayer, announce the colour, power it back down ---
   int track = trackForColour(detected);
   if (track > 0) {
-    powerPlayerOn();
-    dfSerial.begin(9600, SERIAL_8N1, DFPLAYER_RX_PIN, DFPLAYER_TX_PIN);
-    if (player.begin(dfSerial)) {
-      player.volume(PLAYER_VOLUME);
-      player.play(track + 1);
-      waitForPlaybackToFinish();
-    } else {
-      Serial.println("DFPlayer init failed.");
-    }
-    powerPlayerOff();
+    startPlayer();
+    playTrack(track);
+    stopPlayer();
   }
 
   goToSleep();
