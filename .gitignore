@@ -2,3 +2,8 @@
 .build/
 .vscode/
 *.kicad_prl
+reference/
+
+# KiCad lock files and local history
+*.lck
+.history/
