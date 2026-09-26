@@ -34,7 +34,7 @@ The board is 75.9 x 22 mm, laid out as a "spine" along the wand. From the rear:
 - the DFPlayer
 - J1, facing forward to the GY-33
 
-In the low-profile (~5 mm) sockets, the XIAO sits about 7.5 mm up. Its courtyard therefore covers only its socket strips and USB plug, so parts up to about 5 mm tall can go underneath. The socket 3D models are KiCad's 8.5 mm models scaled down to 5 mm.
+In the low-profile (~5 mm) sockets, the XIAO sits about 7.5 mm up. Its courtyard therefore covers only its socket strips and USB plug, so parts up to about 5 mm tall can go underneath. The socket 3D models are KiCad's 8.5 mm models scaled down to 5 mm. The XIAO's 3D model is Seeed's STEP file, in `3dmodels/`, drawn 7.5 mm up; the pin spacer under it isn't modelled.
 
 ## Mounting and off-board parts
 

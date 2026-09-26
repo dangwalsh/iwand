@@ -54,4 +54,9 @@
     (scale (xyz 1 1 0.5882))
     (rotate (xyz 0 0 -90))
   )
+  (model "${KIPRJMOD}/3dmodels/XIAO-ESP32S3.step"
+    (offset (xyz -1.778 -6.1722 7.5))
+    (scale (xyz 1 1 1))
+    (rotate (xyz -90 0 0))
+  )
 )
