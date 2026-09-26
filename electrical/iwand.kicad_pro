@@ -240,7 +240,7 @@
       "internal_id": "",
       "mfg": "",
       "mpn": "",
-      "sch_revision": ""
+      "sch_revision": "v0.2"
     },
     "layer_pairs": [],
     "layer_presets": [],
@@ -658,13 +658,18 @@
       {
         "filename": "iwand.kicad_sch",
         "name": "iwand",
-        "uuid": "00000000-0000-0000-0000-000000000000"
+        "uuid": "8ff03dcf-b57d-4acb-a5d4-fff50849cfa6"
       }
     ],
     "used_designators": "",
     "variants": []
   },
-  "sheets": [],
+  "sheets": [
+    [
+      "8ff03dcf-b57d-4acb-a5d4-fff50849cfa6",
+      "iwand"
+    ]
+  ],
   "text_variables": {},
   "tuning_profiles": {
     "meta": {

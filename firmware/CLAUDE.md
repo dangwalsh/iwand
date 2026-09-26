@@ -39,8 +39,11 @@ SW1 (off-board, on connector J3) has no external pull-up in the schematic (R2/R4
 | D5 | GPIO6 | UART TX to DFPlayer RXD |
 | D8 | GPIO7 | UART TX to GY-33 DR (its RX; SDA in I2C mode) |
 | D9 | GPIO8 | UART RX from GY-33 CT (its TX; SCL in I2C mode) |
+| D10 | GPIO9 | Battery voltage / 2 (R5/R6 1M divider + C1, ADC1). Not read by the firmware yet |
 
-Pins were deliberately grouped: D0/D1 are the two MOSFET gates, D3 is the wake button, D4/D5 are the DFPlayer UART, D8/D9 are the GY-33 UART. The GY-33 was first driven over I2C on D8/D9 but never answered (`update()` timed out), so it was switched to its factory-default serial mode on the same two wires. The schematic nets are `GY33_DR` (D8) and `GY33_CT` (D9).
+Pins were deliberately grouped: D0/D1 are the two MOSFET gates, D3 is the wake button, D4/D5 are the DFPlayer UART, D8/D9 are the GY-33 UART. The GY-33 was first driven over I2C on D8/D9 but never answered (`update()` timed out), so it was switched to its factory-default serial mode on the same two wires. The schematic nets are `GY33_DR` (D8) and `GY33_CT` (D9). D10 carries `VBAT_SENSE`. D2 (GPIO3) was avoided for it because it is a strapping pin.
+
+Power switch SW2 sits in the battery + lead. When it is off, nothing is powered, including the XIAO's USB charger, so the battery only charges with SW2 on.
 
 Note: the sensor MOSFET gate was moved from the schematic's original D2 (GPIO3) to D0 (GPIO1), since GPIO3 is one of the ESP32-S3's four strapping pins (0, 3, 45, 46), sampled at boot/reset to configure chip behavior. D0/GPIO1 has no competing native function. The schematic's R1 net and the `XIAO_ESP32S3` symbol's pin 4 have both been updated from `D2` to `D0` to match. The wake button and DFPlayer-MOSFET-gate nets were later swapped between D1 and D3 (schematic net labels `D1`/`D3_BTN`) purely to group pins more logically; no strapping-pin or electrical concerns were involved in that swap. Likewise, I2C and UART were later swapped between D4/D5 and D8/D9, again only for grouping. Both buses go through the ESP32-S3's GPIO matrix, so any of these pins can carry either one. The `XIAO_ESP32S3` symbol now has all 14 header pins, numbered and named as on Seeed's pinout (1 = D0 … 11 = D10, 12 = 3V3, 13 = GND, 14 = 5V).
 
