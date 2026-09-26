@@ -34,7 +34,14 @@ The board is 75.9 x 22 mm, laid out as a "spine" along the wand. From the rear:
 - the DFPlayer
 - J1, facing forward to the GY-33
 
-In the low-profile (~5 mm) sockets, the XIAO sits about 7.5 mm up. Its courtyard therefore covers only its socket strips and USB plug, so parts up to about 5 mm tall can go underneath. The socket 3D models are KiCad's 8.5 mm models scaled down to 5 mm. The XIAO's 3D model is Seeed's STEP file, in `3dmodels/`, drawn 7.5 mm up; the pin spacer under it isn't modelled.
+The module sockets are 3M 929870 low-profile strips, 3.8 mm tall, bought as 10-pin strips and cut to length. In them, the XIAO sits about 6.3 mm up (3.8 mm socket + 2.5 mm pin spacer). Its courtyard therefore covers only its socket strips and USB plug, so parts up to about 5 mm tall can go underneath.
+
+For the 3D view:
+- **Sockets:** 3M's STEP model is a 10-pin strip, so the view uses KiCad's 1x7/1x8 socket models scaled to 3.8 mm instead.
+- **XIAO:** Seeed's STEP file (in `3dmodels/`), drawn 6.3 mm up. The pin spacer under it isn't modelled.
+- **DFPlayer:** DFRobot's DFR0299 STEP file (in `3dmodels/`, drawn in inches, Y-up). It includes the module's own pin header, with its spacer resting on the socket top. Its microSD slot opens toward the front of the board, facing J1.
+
+Do a dry fit before soldering. A standard 6 mm male pin may bottom out in a 3.8 mm socket and ride slightly higher than 6.3 mm.
 
 ## Mounting and off-board parts
 

@@ -36,12 +36,17 @@
   (pad "16" thru_hole circle (at -8.89 -9.017) (size 1.7 1.7) (drill 1) (layers "*.Cu" "*.Mask"))
   (model "${KICAD10_3DMODEL_DIR}/Connector_PinSocket_2.54mm.3dshapes/PinSocket_1x08_P2.54mm_Vertical.step"
     (offset (xyz -8.89 -9.017 0))
-    (scale (xyz 1 1 0.5882))
+    (scale (xyz 1 1 0.4471))
     (rotate (xyz 0 0 -90))
   )
   (model "${KICAD10_3DMODEL_DIR}/Connector_PinSocket_2.54mm.3dshapes/PinSocket_1x08_P2.54mm_Vertical.step"
     (offset (xyz 8.89 9.017 0))
-    (scale (xyz 1 1 0.5882))
+    (scale (xyz 1 1 0.4471))
     (rotate (xyz 0 0 90))
+  )
+  (model "${KIPRJMOD}/3dmodels/DFPlayer_Mini.step"
+    (offset (xyz 0 0 3.8))
+    (scale (xyz 1 1 1))
+    (rotate (xyz -90 0 -90))
   )
 )
