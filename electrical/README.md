@@ -60,3 +60,13 @@ Do a dry fit before soldering. A standard 6 mm male pin may bottom out in a 3.8 
 - **SW2** is the power switch, in the battery + lead (J4 → SW2 → VBAT). Off disconnects everything, including the charger, so the battery only charges with SW2 on.
 - The XIAO's charge LED sits next to its USB-C port, so the enclosure needs a window or light pipe there.
 - **R5/R6** (1M each) divide VBAT by 2 into D10, which is an ADC input. **C1** (100 nF) steadies the reading. The divider draws about 2 µA, and nothing when SW2 is off.
+
+## Routing and fabrication
+
+- **Stack-up:** 2 layers, 1.6 mm. Rules: 0.2 mm clearance, 0.5 mm copper to edge. Every connection is routed. DRC and the schematic parity check pass with no errors.
+- **Net classes:**
+  - **Default:** 0.25 mm tracks, 0.6/0.3 mm vias.
+  - **Power:** 0.5 mm tracks, 0.8/0.4 mm vias. Covers `VBAT`, `BAT_IN`, `GND`, `SPK1`/`SPK2`, `AUDIO_GND` and `SENSOR_GND`. Branches to R5/R6/C1 and the gate resistors use 0.25 mm, since they carry almost no current.
+- **Module socket pads:** 1.6 mm, so a 0.25 mm track can pass between two 2.54 mm-pitch pins.
+- **Ground:** GND pours on both layers, tied together by stitching vias.
+- **Fab files:** `fab/iwand-gerbers.zip` (copper, mask, silkscreen, edge cuts, and plated and non-plated drill files). Regenerate it with KiCad's Fabrication Outputs, or with `kicad-cli pcb export gerbers` / `export drill`, after any board change.
