@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-iWand is a hand-held device that identifies the color of an object it's pointed at. This `firmware/` directory holds the embedded code that runs on the device; sibling directories at the repo root (`electrical/`, `mechanical/`) hold the corresponding hardware design work for the same product. `electrical/` has a KiCad project (`iwand.kicad_pro`/`.kicad_sch`) that is the source of truth for pin assignments below; `mechanical/` has a `README.md` with enclosure-relevant context but no design files yet.
+iWand is a hand-held device that identifies the color of an object it's pointed at. This `firmware/` directory holds the embedded code that runs on the device; sibling directories at the repo root (`electrical/`, `mechanical/`) hold the corresponding hardware design work for the same product. `electrical/` has a KiCad project (`iwand.kicad_pro`/`.kicad_sch`) that is the source of truth for pin assignments below; `mechanical/` has a `README.md` with enclosure-relevant context and `iwand-pcb.step`, the populated PCB exported from KiCad for the Onshape enclosure design.
 
 ## Hardware
 

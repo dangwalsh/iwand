@@ -2,11 +2,29 @@
 
 iWand is a hand-held device that identifies the color of an object it's pointed at. This directory holds the mechanical/enclosure design; sibling directories at the repo root hold the corresponding work for the same product — `firmware/` (embedded code) and `electrical/` (KiCad schematic, `iwand.kicad_pro`/`.kicad_sch`, title block "iWand").
 
-This directory is currently empty.
+The enclosure is designed in Onshape. This directory holds `iwand-pcb.step`, a STEP model of the populated PCB exported from KiCad, which is the reference the enclosure is built around.
 
 ## Dependencies
 
-No CAD tool has been chosen yet, so there's nothing to install for this directory yet. Add this section once a mechanical design tool (and any exported file formats other collaborators will need) is decided.
+- **Onshape** (browser-based) for the enclosure design.
+- **KiCad 10** (`kicad-cli`) to re-export `iwand-pcb.step` after the board changes.
+
+## PCB model
+
+`iwand-pcb.step` is the board plus every part that has a 3D model, in millimetres. To re-export it after changing `electrical/iwand.kicad_pcb`, run this from the repo root:
+
+```
+"C:\Program Files\KiCad\10.0\bin\kicad-cli.exe" pcb export step --subst-models --force -o mechanical/iwand-pcb.step electrical/iwand.kicad_pcb
+```
+
+The XIAO and DFPlayer models come from `electrical/3dmodels/`, and the rest come from KiCad's standard library.
+
+To use it in Onshape, import the file (Import, or drag it onto the Documents page), then insert the resulting Part Studio into an Assembly with the enclosure. After a re-export, use "Update" on the imported part to pick up the new version.
+
+The model leaves out:
+
+- **Q1/Q2:** the `AO3400_SOT23_Adapter` footprint has no 3D model. Allow about 7.6 x 10 mm lying flat on their pins.
+- **All off-board parts:** the GY-33, speaker, SW1, LiPo and the JST plugs and cables. Model these in Onshape from the sizes below.
 
 ## Components to accommodate
 
