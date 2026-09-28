@@ -2,7 +2,10 @@
 
 iWand is a hand-held device that identifies the color of an object it's pointed at. This directory holds the mechanical/enclosure design; sibling directories at the repo root hold the corresponding work for the same product — `firmware/` (embedded code) and `electrical/` (KiCad schematic, `iwand.kicad_pro`/`.kicad_sch`, title block "iWand").
 
-The enclosure is designed in Onshape. This directory holds `iwand-pcb.step`, a STEP model of the populated PCB exported from KiCad, which is the reference the enclosure is built around.
+The enclosure is designed in Onshape. This directory holds:
+
+- `iwand-pcb.step`: a STEP model of the populated PCB exported from KiCad, which is the reference the enclosure is built around.
+- `iwand-enclosure.step`: an early prototype of the enclosure, exported from Onshape. The Onshape document is the source of truth, so re-export this file after design changes.
 
 ## Dependencies
 
