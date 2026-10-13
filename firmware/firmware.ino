@@ -62,7 +62,7 @@
 // Debug aid: the XIAO's USB serial drops during deep sleep and the host takes
 // a moment to reconnect after each wake, so early prints are lost. Wait up to
 // this long for the serial monitor at boot. Set to 0 for battery use.
-#define SERIAL_WAIT_MS    3000
+#define SERIAL_WAIT_MS    0 // 3000
 
 HardwareSerial sensorSerial(2);
 GY33_UART sensor(sensorSerial);
