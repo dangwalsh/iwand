@@ -4,7 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-iWand is a hand-held device that identifies the color of an object it's pointed at. This `firmware/` directory holds the embedded code that runs on the device; sibling directories at the repo root (`electrical/`, `mechanical/`) hold the corresponding hardware design work for the same product. `electrical/` has a KiCad project (`iwand.kicad_pro`/`.kicad_sch`) that is the source of truth for pin assignments below; `mechanical/` has a `README.md` with enclosure-relevant context and `iwand-pcb.step`, the populated PCB exported from KiCad for the Onshape enclosure design.
+iWand is a hand-held device that identifies the color of an object it's pointed at. The repo holds every part of the product:
+
+- `firmware/`: the embedded code that runs on the device (`firmware.ino`). Its `README.md` lists the Arduino library dependencies.
+- `audio/mp3/`: the clips copied to the DFPlayer's SD card (see DFPlayer Mini Library below).
+- `electrical/`: KiCad project with the schematic (`iwand.kicad_sch`, the source of truth for pin assignments below), the routed PCB (`iwand.kicad_pcb`), a BOM (`iwand.csv`), the project footprint library (`iwand.pretty/`), 3D models (`3dmodels/`) and Gerbers (`fab/`).
+- `mechanical/`: enclosure designed in Onshape. `iwand-pcb.step` is the populated PCB exported from KiCad, and `iWand - Enclosure Top/Middle/Rear.step` are the three enclosure parts exported from Onshape (the Onshape document is the source of truth). Its `README.md` has the component sizes and layout the enclosure must fit.
 
 ## Hardware
 
@@ -45,18 +50,23 @@ Pins were deliberately grouped: D0/D1 are the two MOSFET gates, D3 is the wake b
 
 Power switch SW2 sits in the battery + lead. When it is off, nothing is powered, including the XIAO's USB charger, so the battery only charges with SW2 on.
 
-Note: the sensor MOSFET gate was moved from the schematic's original D2 (GPIO3) to D0 (GPIO1), since GPIO3 is one of the ESP32-S3's four strapping pins (0, 3, 45, 46), sampled at boot/reset to configure chip behavior. D0/GPIO1 has no competing native function. The schematic's R1 net and the `XIAO_ESP32S3` symbol's pin 4 have both been updated from `D2` to `D0` to match. The wake button and DFPlayer-MOSFET-gate nets were later swapped between D1 and D3 (schematic net labels `D1`/`D3_BTN`) purely to group pins more logically; no strapping-pin or electrical concerns were involved in that swap. Likewise, I2C and UART were later swapped between D4/D5 and D8/D9, again only for grouping. Both buses go through the ESP32-S3's GPIO matrix, so any of these pins can carry either one. The `XIAO_ESP32S3` symbol now has all 14 header pins, numbered and named as on Seeed's pinout (1 = D0 … 11 = D10, 12 = 3V3, 13 = GND, 14 = 5V).
+Avoid D2 (GPIO3): it is one of the ESP32-S3's strapping pins (0, 3, 45, 46), sampled at reset. Both UARTs go through the ESP32-S3's GPIO matrix, so pins can be regrouped freely if the schematic changes. The `XIAO_ESP32S3` schematic symbol has all 14 header pins, numbered and named as on Seeed's pinout (1 = D0 … 11 = D10, 12 = 3V3, 13 = GND, 14 = 5V).
 
-**Still-unconfirmed values** (called out with comments in `firmware.ino`, not from the schematic):
-- Which of D8/D9 is TX vs RX for the GY-33. This assumes the common GY-33 pinout, where DR is RX/SDA and CT is TX/SCL. Swap `SENSOR_TX_PIN`/`SENSOR_RX_PIN` if no frames arrive.
-- Sensor and DFPlayer power-up settle delays (`SENSOR_WARMUP_MS`, `PLAYER_WARMUP_MS`) — untested guesses.
+Q1/Q2 are low-side switches (source to `GND`, drain to `SENSOR_GND`/`AUDIO_GND`), so gate HIGH powers the device (`MOSFET_ON`).
+
+**Still-unconfirmed values** (marked with comments in `firmware/firmware.ino`):
+- Sensor and DFPlayer power-up settle delays (`SENSOR_WARMUP_MS`, `PLAYER_WARMUP_MS`).
+- `CAL_SETTLE_MS`, the time allowed for the GY-33 to finish its white balance.
+
 ## Electrical Schematic
 
 `electrical/iwand.kicad_pro` + `iwand.kicad_sch` (title block "iWand") is the KiCad schematic this firmware's pin assignments are derived from — treat it as the source of truth, not the pin table above, if the two ever diverge. Symbol reference for firmware pin logic: J4 (LiPo) → U1 (XIAO ESP32S3) → Q1/R1 (sensor power switch) → J1 (GY-33) and Q2/R3 (DFPlayer power switch) → U3 (DFPlayer Mini) → J2 (speaker), with J3 as the wake button. The GY-33, speaker, button and battery are off-board parts on JST-PH connectors; see `electrical/README.md` for footprints and mounting.
 
 ## Current State
 
-The firmware is a single-file Arduino sketch (`firmware.ino`). There is no build system, test harness, or additional source file yet, so there are no build/lint/test commands to document. As the sketch grows into multiple files or a PlatformIO project, update this file with the real build/upload/test commands.
+The firmware is a single-file Arduino sketch (`firmware/firmware.ino`), built and uploaded from the Arduino IDE with the Espressif **esp32** board package and the **XIAO_ESP32S3** board selected (libraries are listed in `firmware/README.md`). There is no command-line build or test harness. If the sketch moves to arduino-cli or PlatformIO, add the real build/upload/test commands here.
+
+`SERIAL_WAIT_MS` (3000) holds each boot for up to 3 s waiting for the USB serial monitor, so debug output isn't lost after a wake. Set it to 0 before battery use.
 
 ## GY-33 Library
 

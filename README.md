@@ -8,7 +8,7 @@ iWand is a hand-held device that identifies the color of an object it's pointed 
 - [`electrical/`](electrical/README.md) — KiCad project: schematic, routed 75.9 × 22 mm two-layer PCB, project footprint library (`iwand.pretty`), 3D models, and ready-to-order Gerbers (`fab/iwand-gerbers.zip`)
 - [`mechanical/`](mechanical/README.md) — enclosure design in Onshape, with a STEP model of the populated PCB (`iwand-pcb.step`) exported from KiCad
 
-Each directory's README has setup/dependency details specific to that part of the project; `firmware/CLAUDE.md` has the full architecture writeup (wake/sleep flow, pin assignments, library APIs).
+Each directory's README has setup/dependency details specific to that part of the project; [`CLAUDE.md`](CLAUDE.md) has the full architecture writeup (wake/sleep flow, pin assignments, library APIs).
 
 ## Status
 

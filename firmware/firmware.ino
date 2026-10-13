@@ -9,9 +9,7 @@
 // Pin assignments -- from the schematic, board is a Seeed XIAO ESP32S3.
 // Silkscreen D-labels translated to GPIO numbers per Seeed's pinout:
 //   D0=GPIO1  D1=GPIO2  D3=GPIO4  D4=GPIO5  D5=GPIO6  D8=GPIO7  D9=GPIO8
-// Sensor MOSFET gate moved from D2 (GPIO3, an ESP32-S3 strapping pin) to
-// D0 (GPIO1), a plain unused pin with no competing native function -- update
-// the schematic's R1 net from D2 to D0 to match.
+// D2 (GPIO3) is left unused: it's an ESP32-S3 strapping pin.
 // D4/D5 UART roles match the schematic's crossover wiring (D4 = MCU RX, fed
 // by DFPlayer TX; D5 = MCU TX, feeding DFPlayer RX).
 // D8/D9 are wired to the GY-33's DR/CT pins, which are SDA/SCL in I2C mode
@@ -28,9 +26,8 @@
 #define SENSOR_TX_PIN      7   // D8: ESP32 TX -> GY-33 DR (RX)
 #define SENSOR_RX_PIN      8   // D9: ESP32 RX <- GY-33 CT (TX)
 
-// Assumes each AO3400 is wired as a low-side switch (drain to the device's
-// ground return, source to system ground): gate HIGH turns the device ON.
-// Invert these if the hardware ends up wired the other way.
+// Each AO3400 is a low-side switch (drain to the device's ground return,
+// source to system ground, per the schematic): gate HIGH turns the device ON.
 #define MOSFET_ON  HIGH
 #define MOSFET_OFF LOW
 
