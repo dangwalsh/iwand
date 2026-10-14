@@ -23,7 +23,7 @@ Everything else is stock KiCad:
 - a 3 mm disc capacitor
 - a C&K OS102011MA1QN1-style right-angle slide switch
 - JST-PH side-entry sockets (J1-J4)
-- a 1 x 2 pin header (J5)
+- a JST-PH top-entry socket (J5, B2B-PH-K). It takes the same PHR-2 plug as J1-J4, but a side-entry one doesn't fit between Q2 and SW2.
 
 ## Board
 
@@ -51,8 +51,10 @@ Do a dry fit before soldering. A standard 6 mm male pin may bottom out in a 3.8 
   - **J2:** speaker.
   - **J3:** wake button.
   - **J4:** LiPo.
-- JST battery polarity isn't standardised. Check each battery against the board's + mark before plugging it in.
-- The XIAO's battery pads are on its underside, not on its headers. **J5** takes two short wires from those BAT+/BAT- pads so the XIAO can run from, and charge, the battery on J4.
+- JST battery polarity isn't standardised. Check each battery against the board's +/- marks before plugging it in. They're on the front, between J4 and the XIAO socket, and on the back next to `BAT`.
+  - J4 puts + on pin 1, which is the reverse of most LiPo plugs (black/GND on the left). Such a battery needs the two crimps swapped in its JST housing.
+  - Boards fabricated before the back-side marks were added only have the small front marks, which the J4 housing hides.
+- The XIAO's battery pads are on its underside, not on its headers. **J5** takes a short JST-PH pigtail soldered to those BAT+/BAT- pads (pin 1 = BAT+) so the XIAO can run from, and charge, the battery on J4.
 
 ## Power and charging
 

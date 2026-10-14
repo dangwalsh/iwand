@@ -4,7 +4,7 @@
 "J2","1","Speaker 8R","","","","","${EXCLUDE_FROM_POS_FILES}","Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",""
 "J3","1","Wake button SW1","","","","","${EXCLUDE_FROM_POS_FILES}","Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",""
 "J4","1","LiPo 3.7V (+ -)","","","","","${EXCLUDE_FROM_POS_FILES}","Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",""
-"J5","1","XIAO BAT+ BAT- link","","","","","${EXCLUDE_FROM_POS_FILES}","Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical",""
+"J5","1","XIAO BAT+ BAT- link","","","","","${EXCLUDE_FROM_POS_FILES}","Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",""
 "Q1,Q2","2","AO3400","","","","","${EXCLUDE_FROM_POS_FILES}","iwand:AO3400_SOT23_Adapter",""
 "R1,R3","2","100","","","","","${EXCLUDE_FROM_POS_FILES}","Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal",""
 "R2,R4","2","10k","","","","","${EXCLUDE_FROM_POS_FILES}","Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal",""

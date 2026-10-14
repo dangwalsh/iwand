@@ -39,6 +39,7 @@ On the main PCB:
 - **U3:** DFPlayer Mini (audio playback), 20.3 x 20.3 mm, in female header sockets. Its microSD slot opens toward the front of the wand, right beside J1, so there's no finger room to swap the card in place. Pull the DFPlayer out of its sockets to change the audio files.
 - **Q1/Q2:** AO3400 MOSFETs on SOT-23 adapter boards (~7.6 x 10 mm), mounted flat on their pins. **R1–R4:** through-hole resistors, mounted upright.
 - **J1–J4:** JST-PH side-entry sockets, which need room for the plugs and cable bends.
+- **J5:** a JST-PH top-entry socket between Q2 and SW2, about 6 mm tall. Its plug and pigtail rise above that and bend under the XIAO to its battery pads.
 - **SW2:** a right-angle slide switch (power). Its lever sticks out about 4 mm past the same long edge as the USB-C, about 13 mm forward of it, so one side opening or two small cut-outs can serve both.
 
 The board is 75.9 x 22 mm. Its tallest point is the top of the XIAO, about 10–11 mm above the board (3.8 mm low-profile socket + 2.5 mm pin spacer + the module). Pin tails stick out up to about 3 mm below. The XIAO's USB-C port sits over one long edge of the board and must line up with a slot in the enclosure wall.

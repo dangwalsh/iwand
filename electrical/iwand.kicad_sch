@@ -7,7 +7,7 @@
   (title_block
     (title "iWand")
     (date "")
-    (rev "v0.2")
+    (rev "v0.3")
     (comment 1 "Sensor+MOSFET power gating, DFPlayer audio, GY-33 UART")
   )
 
@@ -1238,7 +1238,7 @@
     (property "Value" "XIAO BAT+ BAT- link" (at 307.34 153.67 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" (at 304.8 152.4 0)
+    (property "Footprint" "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical" (at 304.8 152.4 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "" (at 304.8 152.4 0)
