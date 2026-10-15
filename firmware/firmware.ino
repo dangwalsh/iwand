@@ -9,6 +9,7 @@
 // Pin assignments -- from the schematic, board is a Seeed XIAO ESP32S3.
 // Silkscreen D-labels translated to GPIO numbers per Seeed's pinout:
 //   D0=GPIO1  D1=GPIO2  D3=GPIO4  D4=GPIO5  D5=GPIO6  D8=GPIO7  D9=GPIO8
+//   D10=GPIO9
 // D2 (GPIO3) is left unused: it's an ESP32-S3 strapping pin.
 // D4/D5 UART roles match the schematic's crossover wiring (D4 = MCU RX, fed
 // by DFPlayer TX; D5 = MCU TX, feeding DFPlayer RX).
@@ -16,7 +17,7 @@
 // and RX/TX in serial mode. The sensor runs in serial mode (its factory
 // default), so D8 = MCU TX -> GY-33 DR (RX), D9 = MCU RX <- GY-33 CT (TX).
 // Grouped for tidiness: D0/D1 = MOSFET gates, D3 = wake button, D4/D5 =
-// DFPlayer UART, D8/D9 = GY-33 UART.
+// DFPlayer UART, D8/D9 = GY-33 UART, D10 = battery sense.
 // ---------------------------------------------------------------------------
 #define SENSOR_MOSFET_PIN  1   // D0: R1 -> Q1 gate, switches GY-33 power
 #define PLAYER_MOSFET_PIN  2   // D1: R3 -> Q2 gate, switches DFPlayer power
@@ -25,6 +26,7 @@
 #define DFPLAYER_TX_PIN    6   // D5: ESP32 TX -> DFPlayer RXD
 #define SENSOR_TX_PIN      7   // D8: ESP32 TX -> GY-33 DR (RX)
 #define SENSOR_RX_PIN      8   // D9: ESP32 RX <- GY-33 CT (TX)
+#define BATTERY_SENSE_PIN  9   // D10: battery voltage / 2 (R5/R6 1M divider + C1)
 
 // Each AO3400 is a low-side switch (drain to the device's ground return,
 // source to system ground, per the schematic): gate HIGH turns the device ON.
@@ -48,18 +50,27 @@
 #define BLACK_MAX_VALUE      0.25f  // brightest channel below this -> Black
 #define WHITE_MIN_VALUE      0.80f  // unsaturated and at least this bright -> White, else Gray
 #define WHITE_MAX_SATURATION 0.15f  // channels this close together -> White/Gray/Black
-#define PLAY_TIMEOUT_MS   5000
+#define PLAY_TIMEOUT_MS      5000
 // Spoken calibration prompts, in the SD card's /mp3 folder.
-#define TRACK_CAL_WHITE   11    // 0011.mp3: "point at white and press the button"
-#define TRACK_CAL_BLACK   12    // 0012.mp3: "point at black and press the button"
-#define TRACK_CAL_DONE    13    // 0013.mp3: "calibration complete"
+#define TRACK_CAL_WHITE     11    // 0011.mp3: "point at white and press the button"
+#define TRACK_CAL_BLACK     12    // 0012.mp3: "point at black and press the button"
+#define TRACK_CAL_DONE      13    // 0013.mp3: "calibration complete"
 #define CAL_STEP_TIMEOUT_MS 30000 // abort calibration if SW1 isn't pressed in time, to save battery
-#define CAL_SETTLE_MS     500     // time for the GY-33 to finish white balance -- untested guess
-#define DEBOUNCE_MS       30
+#define CAL_SETTLE_MS       500     // time for the GY-33 to finish white balance -- untested guess
+// Battery monitoring. Voltages are measured at rest, before the sensor or
+// player is powered. Thresholds are starting guesses for a 1-cell LiPo --
+// check the readings against a multimeter and tune.
+#define BATTERY_DIVIDER     2       // R5/R6 halve the battery voltage
+#define BATTERY_SAMPLES     8       // ADC readings averaged per measurement
+#define BATTERY_LOW_MV      3500    // below this, warn after announcing the colour
+#define BATTERY_CRITICAL_MV 3300    // below this, warn and sleep without reading
+#define TRACK_BATTERY_LOW   14      // 0014.mp3: "battery low"
+#define TRACK_BATTERY_EMPTY 15      // 0015.mp3: "battery empty, please charge"
+#define DEBOUNCE_MS         30
 // Debug aid: the XIAO's USB serial drops during deep sleep and the host takes
 // a moment to reconnect after each wake, so early prints are lost. Wait up to
 // this long for the serial monitor at boot. Set to 0 for battery use.
-#define SERIAL_WAIT_MS    0 // 3000
+#define SERIAL_WAIT_MS      0 // 3000
 
 HardwareSerial sensorSerial(2);
 GY33_UART sensor(sensorSerial);
@@ -240,6 +251,16 @@ void playTrack(int track) {
   waitForPlaybackToFinish();
 }
 
+// Returns the battery voltage in millivolts. analogReadMilliVolts() applies
+// the ESP32-S3's factory ADC calibration, which raw analogRead() doesn't.
+uint32_t readBatteryMillivolts() {
+  uint32_t total = 0;
+  for (int i = 0; i < BATTERY_SAMPLES; i++) {
+    total += analogReadMilliVolts(BATTERY_SENSE_PIN);
+  }
+  return total / BATTERY_SAMPLES * BATTERY_DIVIDER;
+}
+
 bool buttonHeld() {
   return digitalRead(WAKE_BUTTON_PIN) == LOW;
 }
@@ -352,6 +373,18 @@ void setup() {
 
   pinMode(WAKE_BUTTON_PIN, INPUT_PULLUP);
 
+  // Measure the battery before anything draws current. When it's nearly
+  // flat, say so and go back to sleep rather than risk a brownout mid-reading.
+  uint32_t batteryMv = readBatteryMillivolts();
+  Serial.printf("Battery: %lu mV\n", (unsigned long)batteryMv);
+  if (batteryMv < BATTERY_CRITICAL_MV) {
+    startPlayer();
+    playTrack(TRACK_BATTERY_EMPTY);
+    stopPlayer();
+    goToSleep();
+  }
+  bool batteryLow = batteryMv < BATTERY_LOW_MV;
+
   // SW1 is also the wake button, so it's always pressed on a deep-sleep wake.
   // Only treat it as a calibration request on a cold power-up.
   bool coldBoot = esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_EXT0;
@@ -373,11 +406,13 @@ void setup() {
   Serial.print("Detected colour: ");
   Serial.println(detected);
 
-  // --- Power the DFPlayer, announce the colour, power it back down ---
+  // --- Power the DFPlayer, announce the colour (and any battery warning),
+  // power it back down ---
   int track = trackForColour(detected);
-  if (track > 0) {
+  if (track > 0 || batteryLow) {
     startPlayer();
-    playTrack(track);
+    if (track > 0) playTrack(track);
+    if (batteryLow) playTrack(TRACK_BATTERY_LOW);
     stopPlayer();
   }
 

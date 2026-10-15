@@ -23,8 +23,9 @@ iWand is a hand-held device that identifies the color of an object it's pointed 
 
 There is no `loop()` logic. The device spends nearly all its time in ESP32-S3 deep sleep; a button press on `WAKE_BUTTON_PIN` triggers an `ext0` wakeup, which resets the MCU and re-enters `setup()` (deep sleep wake is a reset, not a resume — this is why `loop()` is intentionally empty). `setup()` runs the full cycle each time:
 
+0. Read the battery voltage (`readBatteryMillivolts()`, D10) before anything is powered. Below `BATTERY_CRITICAL_MV` it plays `TRACK_BATTERY_EMPTY` and goes straight back to sleep without reading.
 1. Power the GY-33 via its MOSFET, take one reading, power it back down.
-2. Map the detected colour name to a track number and power the DFPlayer Mini via its MOSFET to play the matching audio file, power it back down once playback finishes (or times out).
+2. Map the detected colour name to a track number and power the DFPlayer Mini via its MOSFET to play the matching audio file, followed by `TRACK_BATTERY_LOW` if the battery was below `BATTERY_LOW_MV`, power it back down once playback finishes (or times out).
 3. Re-arm `ext0` wakeup on the button pin and re-enter deep sleep.
 
 SW1 (off-board, on connector J3) has no external pull-up in the schematic (R2/R4 are MOSFET gate pull-downs). `goToSleep()` must therefore enable the RTC-domain pull-up with `rtc_gpio_pullup_en()`, because `pinMode(INPUT_PULLUP)` doesn't carry into deep sleep. Without it the pin floats, reads LOW, and the device wakes up again straight away in a loop.
@@ -44,7 +45,7 @@ SW1 (off-board, on connector J3) has no external pull-up in the schematic (R2/R4
 | D5 | GPIO6 | UART TX to DFPlayer RXD |
 | D8 | GPIO7 | UART TX to GY-33 DR (its RX; SDA in I2C mode) |
 | D9 | GPIO8 | UART RX from GY-33 CT (its TX; SCL in I2C mode) |
-| D10 | GPIO9 | Battery voltage / 2 (R5/R6 1M divider + C1, ADC1). Not read by the firmware yet |
+| D10 | GPIO9 | Battery voltage / 2 (R5/R6 1M divider + C1, ADC1), read with `analogReadMilliVolts()` |
 
 Pins were deliberately grouped: D0/D1 are the two MOSFET gates, D3 is the wake button, D4/D5 are the DFPlayer UART, D8/D9 are the GY-33 UART. The GY-33 was first driven over I2C on D8/D9 but never answered (`update()` timed out), so it was switched to its factory-default serial mode on the same two wires. The schematic nets are `GY33_DR` (D8) and `GY33_CT` (D9). D10 carries `VBAT_SENSE`. D2 (GPIO3) was avoided for it because it is a strapping pin.
 
@@ -57,6 +58,7 @@ Q1/Q2 are low-side switches (source to `GND`, drain to `SENSOR_GND`/`AUDIO_GND`)
 **Still-unconfirmed values** (marked with comments in `firmware/firmware.ino`):
 - Sensor and DFPlayer power-up settle delays (`SENSOR_WARMUP_MS`, `PLAYER_WARMUP_MS`).
 - `CAL_SETTLE_MS`, the time allowed for the GY-33 to finish its white balance.
+- Battery thresholds `BATTERY_LOW_MV` (3500) and `BATTERY_CRITICAL_MV` (3300), and the accuracy of the ADC reading against a multimeter.
 
 ## Electrical Schematic
 
@@ -97,5 +99,5 @@ Uses the official `DFRobotDFPlayerMini` Arduino library (https://github.com/DFRo
 Confirmed API in use:
 - `bool begin(Stream& stream, bool isACK = true, bool doReset = true)`
 - `void playMp3Folder(int fileNumber)` plays `/mp3/NNNN.mp3` by file name, and `void volume(uint8_t volume)`. The sketch doesn't use `play(int)`, because that picks files by the order they were copied onto the card, not by name. All audio files go in the SD card's `mp3` folder.
-- SD card layout (recorded and tested on hardware): `0001`–`0010` are the colour names, in `trackForColour()` order: Black, White, Gray, Red, Orange, Yellow, Green, Cyan, Blue, Purple. `0011`–`0013` are the calibration prompts (`TRACK_CAL_*`). The sketch once had a `play(track + 1)` workaround, which is gone now that `playMp3Folder()` picks files by name.
+- SD card layout (recorded and tested on hardware): `0001`–`0010` are the colour names, in `trackForColour()` order: Black, White, Gray, Red, Orange, Yellow, Green, Cyan, Blue, Purple. `0011`–`0013` are the calibration prompts (`TRACK_CAL_*`). `0014` ("battery low") and `0015` ("battery empty") are the battery warnings (`TRACK_BATTERY_*`), recorded but not yet tested on hardware. The sketch once had a `play(track + 1)` workaround, which is gone now that `playMp3Folder()` picks files by name.
 - Playback-finished detection is event-based, not a blocking call: poll `available()`, and when true check `readType() == DFPlayerPlayFinished`. Stale events stay buffered: a prompt's "finished" event arrives while the sketch is waiting for SW1, and some modules send it twice. `playTrack()` therefore clears `available()`/`readType()` before each play. Without that, the wait returned straight away and the final calibration prompt was cut off by `stopPlayer()`.
