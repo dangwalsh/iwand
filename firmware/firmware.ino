@@ -50,6 +50,11 @@
 #define BLACK_MAX_VALUE      0.25f  // brightest channel below this -> Black
 #define WHITE_MIN_VALUE      0.80f  // unsaturated and at least this bright -> White, else Gray
 #define WHITE_MAX_SATURATION 0.15f  // channels this close together -> White/Gray/Black
+// Brown is a dark orange/yellow, so it's told apart by brightness within this
+// hue range. All three are starting guesses -- tune on real brown and orange targets.
+#define BROWN_MIN_HUE        10.0f  // degrees
+#define BROWN_MAX_HUE        50.0f  // degrees
+#define BROWN_MAX_VALUE      0.70f  // in the hue range and dimmer than this -> Brown
 #define PLAY_TIMEOUT_MS      5000
 // Spoken calibration prompts, in the SD card's /mp3 folder.
 #define TRACK_CAL_WHITE     11    // 0011.mp3: "point at white and press the button"
@@ -97,6 +102,7 @@ int trackForColour(const char* colour) {
   if (strcmp(colour, "Cyan") == 0)   return 8;
   if (strcmp(colour, "Blue") == 0)   return 9;
   if (strcmp(colour, "Purple") == 0) return 10;
+  if (strcmp(colour, "Brown") == 0)  return 16;
   return 0; // unrecognised -- don't play anything
 }
 
@@ -184,6 +190,10 @@ const char* classifyColour(const GY33_Raw& raw) {
     // Without a white point every channel is scaled to the clear channel, so
     // brightness is meaningless and White can't be told from Gray.
     return (!haveWhitePoint || maxc >= WHITE_MIN_VALUE) ? "White" : "Gray";
+  }
+  // Needs the white point: without it brightness can't be judged (as for Black).
+  if (haveWhitePoint && hue >= BROWN_MIN_HUE && hue < BROWN_MAX_HUE && maxc < BROWN_MAX_VALUE) {
+    return "Brown";
   }
   // Hue bands in degrees. Measured (gamma-encoded) so far: teal paper ~166,
   // blue ~207, purple ~250. Others are still rough starting points.
