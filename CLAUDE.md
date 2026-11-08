@@ -10,6 +10,7 @@ iWand is a hand-held device that identifies the color of an object it's pointed 
 - `audio/mp3/`: the clips copied to the DFPlayer's SD card (see DFPlayer Mini Library below).
 - `electrical/`: KiCad project with the schematic (`iwand.kicad_sch`, the source of truth for pin assignments below), the routed PCB (`iwand.kicad_pcb`), a BOM (`iwand.csv`), the project footprint library (`iwand.pretty/`), 3D models (`3dmodels/`) and Gerbers (`fab/`).
 - `mechanical/`: enclosure designed in Onshape. `iwand-pcb.step` is the populated PCB exported from KiCad, and `iWand - Enclosure Top/Middle/Rear.step` are the three enclosure parts exported from Onshape (the Onshape document is the source of truth). Its `README.md` has the component sizes and layout the enclosure must fit.
+- `concepts/`: other ways to build iWand, kept next to the product but not part of its build: `analog/` (no MCU, comparator network and LED wheel) and `mechanical/` (no electronics, brightness-matching by eye). `concepts/README.md` holds the shared colour thresholds converted to linear light; when the firmware thresholds change, check whether the concepts need updating. iWand's users are colour-blind, so no design may show a result by colour alone.
 
 ## Hardware
 
