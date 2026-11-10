@@ -1,0 +1,386 @@
+<title>Mechanical iWand</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;650&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column of instrument plates; each figure sits on a ruled plate with its caption below. */
+:root {
+  --bg: #f3f5f6;
+  --plate: #ffffff;
+  --fg: #1a2227;
+  --muted: #5a6872;
+  --rule: #cdd5da;
+  --accent: #1d6a86;       /* light paths, the active pointer */
+  --accent-soft: #1d6a8622;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11171a; --plate: #182024; --fg: #e3e9ec; --muted: #94a3ab; --rule: #2d393f;
+    --accent: #62b6d3; --accent-soft: #62b6d326; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11171a; --plate: #182024; --fg: #e3e9ec; --muted: #94a3ab; --rule: #2d393f;
+  --accent: #62b6d3; --accent-soft: #62b6d326; color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--fg);
+  font: 400 17px/1.55 var(--body);
+}
+.wrap {
+  max-width: 900px; margin: 0 auto;
+  padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 40px;
+}
+header { display: grid; gap: 10px; max-width: 65ch; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 650 clamp(30px, 5vw, 44px)/1.05 var(--display); margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+h2 { font: 650 22px/1.2 var(--display); margin: 0; text-wrap: balance; }
+p { margin: 0; }
+.lede { color: var(--muted); font-size: 18px; }
+section { display: grid; gap: 14px; }
+section > p, section > ol { max-width: 65ch; }
+.num { font: 500 13px/1 var(--mono); color: var(--accent); letter-spacing: .06em; }
+figure {
+  margin: 0; background: var(--plate); border: 1px solid var(--rule); border-radius: 6px;
+  padding: 20px; display: grid; gap: 14px;
+}
+.scroll { overflow-x: auto; }
+figure svg { display: block; width: 100%; height: auto; color: var(--fg); font-family: var(--body); }
+.scroll svg { min-width: 560px; }
+figcaption { font-size: 15px; color: var(--muted); max-width: 70ch; }
+figcaption b { color: var(--fg); font-weight: 600; }
+svg .ray { stroke: var(--accent); fill: none; stroke-width: 2; stroke-dasharray: 6 4; }
+svg .ray-head { fill: var(--accent); }
+svg .acc { fill: var(--accent); }
+svg .acc-stroke { stroke: var(--accent); }
+svg .soft { fill: var(--accent-soft); }
+svg .muted { fill: var(--muted); }
+svg .lbl { font-size: 13px; fill: currentColor; }
+svg .sm { font-size: 11.5px; fill: var(--muted); }
+svg .mono { font-family: var(--mono); }
+svg .plate { fill: var(--plate); }
+code, .mono { font-family: var(--mono); font-size: .92em; }
+ol.steps { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; }
+ol.steps li::marker { font-family: var(--mono); color: var(--accent); }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font: 600 12px/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+td.r { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.result { font: 650 20px/1 var(--display); }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">iWand · no-electronics concept</div>
+  <h1>Mechanical iWand</h1>
+  <p class="lede">A colour identifier for colour-blind users that needs no battery and no circuit. Your eye only has to judge when two halves look equally bright, which colour-blind people can do. Optics and a printed card do the rest.</p>
+</header>
+
+<section>
+  <span class="num">FIG 1 · INSIDE THE DEVICE</span>
+  <h2>One channel, cut in half</h2>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 840 420" role="img" aria-label="Cross-section: daylight through a frosted window lights both the object and a white tile. The object is seen straight up through the left half of the eyepiece. The tile is seen through a polarizer dial, then two mirrors fold it into the right half. One colour filter covers both halves.">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 Z" class="ray-head"/>
+        </marker>
+        <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="8" stroke="currentColor" stroke-width="1" opacity=".35"/>
+        </pattern>
+      </defs>
+
+      <!-- object surface -->
+      <rect x="60" y="370" width="640" height="26" fill="url(#hatch)"/>
+      <line x1="60" y1="370" x2="700" y2="370" stroke="currentColor" stroke-width="2"/>
+      <text x="64" y="412" class="sm">object being identified</text>
+
+      <!-- body -->
+      <path d="M140 40 H600 V340 H460 M380 340 H300 M200 340 H140 V40" fill="none" stroke="currentColor" stroke-width="2.5"/>
+      <!-- nose -->
+      <line x1="200" y1="340" x2="200" y2="368" stroke="currentColor" stroke-width="2.5"/>
+      <line x1="300" y1="340" x2="300" y2="368" stroke="currentColor" stroke-width="2.5"/>
+      <!-- chamber ceiling with two openings -->
+      <path d="M140 250 H222 M278 250 H368 M432 250 H470" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".6"/>
+      <line x1="470" y1="250" x2="470" y2="340" stroke="currentColor" stroke-width="1.5" opacity=".6"/>
+
+      <!-- frosted window (left wall) -->
+      <rect x="134" y="262" width="12" height="70" class="soft" stroke="var(--accent)" stroke-width="1.5"/>
+      <line x1="140" y1="266" x2="140" y2="328" stroke="var(--accent)" stroke-width="1" stroke-dasharray="2 3"/>
+
+      <!-- daylight in -->
+      <line x1="40" y1="280" x2="128" y2="292" class="ray" marker-end="url(#ah)"/>
+      <line x1="40" y1="314" x2="128" y2="306" class="ray" marker-end="url(#ah)"/>
+      <text x="20" y="262" class="lbl">daylight</text>
+      <!-- light inside chamber to sample and tile -->
+      <path d="M150 300 L238 362" class="ray" marker-end="url(#ah)"/>
+      <path d="M150 292 Q300 270 400 322" class="ray" marker-end="url(#ah)"/>
+
+      <!-- white tile -->
+      <rect x="370" y="326" width="70" height="10" fill="var(--plate)" stroke="currentColor" stroke-width="1.5"/>
+
+      <!-- sample view ray: straight up, left half -->
+      <path d="M238 366 V48" class="ray" marker-end="url(#ah)"/>
+      <!-- tile view ray: up, mirror, left, mirror, up -->
+      <path d="M405 324 V110 H264 V48" class="ray" marker-end="url(#ah)"/>
+
+      <!-- polarizers -->
+      <rect x="214" y="211" width="48" height="6" fill="currentColor" opacity=".55"/>
+      <rect x="380" y="211" width="50" height="6" fill="currentColor" opacity=".55"/>
+      <rect x="378" y="183" width="54" height="7" class="acc"/>
+      <!-- dial wheel through right wall -->
+      <line x1="432" y1="186" x2="600" y2="186" stroke="var(--accent)" stroke-width="1.5"/>
+      <rect x="596" y="170" width="16" height="32" rx="3" class="acc"/>
+
+      <!-- mirrors -->
+      <line x1="393" y1="98" x2="417" y2="122" stroke="currentColor" stroke-width="3"/>
+      <line x1="254" y1="100" x2="274" y2="120" stroke="currentColor" stroke-width="3"/>
+
+      <!-- filter spanning both halves -->
+      <rect x="218" y="74" width="66" height="10" fill="url(#hatch)" stroke="currentColor" stroke-width="1.5"/>
+
+      <!-- eyepiece + eye -->
+      <path d="M222 40 V30 M282 40 V30" stroke="currentColor" stroke-width="2.5"/>
+      <path d="M232 14 Q252 2 272 14 Q252 26 232 14 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="252" cy="14" r="4" fill="currentColor"/>
+
+      <!-- label leaders -->
+      <g stroke="currentColor" stroke-width="1" opacity=".45">
+        <line x1="284" y1="18" x2="636" y2="18"/>
+        <line x1="286" y1="79" x2="636" y2="79"/>
+        <line x1="420" y1="110" x2="636" y2="110"/>
+        <line x1="612" y1="186" x2="636" y2="186"/>
+        <line x1="432" y1="214" x2="636" y2="214"/>
+        <line x1="442" y1="331" x2="636" y2="331"/>
+        <line x1="300" y1="355" x2="636" y2="355"/>
+      </g>
+      <g class="lbl">
+        <text x="644" y="22">eyepiece: you see a split circle</text>
+        <text x="644" y="83">R, G or B filter (covers both halves)</text>
+        <text x="644" y="114">two mirrors fold tile into right half</text>
+        <text x="644" y="190" class="acc">dial: rotating polarizer</text>
+        <text x="644" y="218">fixed polarizers (one per side)</text>
+        <text x="644" y="335">white reference tile</text>
+        <text x="644" y="359">sample port, pressed to object</text>
+      </g>
+      <text x="20" y="352" class="sm">frosted window</text>
+      <text x="20" y="366" class="sm">lights both</text>
+    </svg>
+    </div>
+    <figcaption><b>Both halves see the same daylight and pass through the same filter.</b> The only difference between them is the object versus the white tile. Turning the dial dims the tile half until it matches. Because both halves go through one filter, the viewer's own colour vision cancels out. The real device has three of these channels side by side: red, green and blue.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <span class="num">FIG 2 · WHAT YOU SEE</span>
+  <h2>Turn until the line disappears</h2>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 760 230" role="img" aria-label="Left: a split circle whose halves differ in brightness while turning the dial, then the same circle with equal halves once matched. Right: the three matched fields for orange paper, with dial readings red 0.05, green 0.55, blue 1.35.">
+      <defs>
+        <marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0,0 L10,5 L0,10 Z" fill="currentColor"/>
+        </marker>
+      </defs>
+      <!-- before -->
+      <path d="M90 50 A60 60 0 0 0 90 170 Z" fill="#8c8c8c"/>
+      <path d="M90 50 A60 60 0 0 1 90 170 Z" fill="#dadada"/>
+      <circle cx="90" cy="110" r="60" fill="none" stroke="currentColor" stroke-width="2"/>
+      <line x1="90" y1="50" x2="90" y2="170" stroke="currentColor" stroke-width="1"/>
+      <text x="90" y="196" text-anchor="middle" class="lbl">turning: halves differ</text>
+      <text x="60" y="38" text-anchor="middle" class="sm">object</text>
+      <text x="120" y="38" text-anchor="middle" class="sm">tile</text>
+
+      <line x1="165" y1="110" x2="205" y2="110" stroke="currentColor" stroke-width="1.5" marker-end="url(#ah2)"/>
+
+      <!-- after -->
+      <circle cx="280" cy="110" r="60" fill="#8c8c8c" stroke="currentColor" stroke-width="2"/>
+      <line x1="280" y1="50" x2="280" y2="170" stroke="currentColor" stroke-width="1" opacity=".25"/>
+      <text x="280" y="196" text-anchor="middle" class="lbl">matched: read the dial</text>
+
+      <line x1="380" y1="30" x2="380" y2="200" stroke="currentColor" stroke-width="1" opacity=".3"/>
+
+      <!-- three matched fields: orange paper -->
+      <text x="570" y="30" text-anchor="middle" class="sm">orange paper, all three matched</text>
+      <circle cx="470" cy="100" r="44" fill="#e9e9e9" stroke="currentColor" stroke-width="2"/>
+      <circle cx="570" cy="100" r="44" fill="#858585" stroke="currentColor" stroke-width="2"/>
+      <circle cx="670" cy="100" r="44" fill="#2e2e2e" stroke="currentColor" stroke-width="2"/>
+      <text x="470" y="105" text-anchor="middle" font-size="16" font-weight="600" fill="#1a2227">R</text>
+      <text x="570" y="105" text-anchor="middle" font-size="16" font-weight="600" fill="#1a2227">G</text>
+      <text x="670" y="105" text-anchor="middle" font-size="16" font-weight="600" fill="#ededed">B</text>
+      <text x="470" y="172" text-anchor="middle" class="lbl mono">D 0.05</text>
+      <text x="570" y="172" text-anchor="middle" class="lbl mono">D 0.55</text>
+      <text x="670" y="172" text-anchor="middle" class="lbl mono">D 1.35</text>
+      <text x="470" y="192" text-anchor="middle" class="sm">brightest</text>
+      <text x="670" y="192" text-anchor="middle" class="sm">dimmest</text>
+    </svg>
+    </div>
+    <figcaption><b>The task is brightness only.</b> You never judge hue, only when the dividing line stops showing. Each dial then gives a reading in optical density (D): <span class="mono">0</span> means as bright as white, <span class="mono">1</span> is a tenth as bright, <span class="mono">2</span> a hundredth. A lower number means more of that light came back.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <span class="num">FIG 3 · THE DIAL</span>
+  <h2>Two polarizers make a smooth dimmer</h2>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 370 310" role="img" aria-label="Quarter-turn dial from 0 degrees, parallel polarizers and full brightness, to 90 degrees, crossed and dark. Density marks: 0 at 0 degrees, 0.21 at 38 degrees, 0.34 at 48 degrees, 1.0 at 72 degrees, 1.33 at 78 degrees, 2.0 at 84 degrees. Zones: bright, light, dark band, black.">
+      <!-- zones (annulus r 140..180, centre 80,280) -->
+      <path d="M80 100 A180 180 0 0 1 191.6 138.7 L166.8 170.1 A140 140 0 0 0 80 140 Z" class="soft" stroke="currentColor" stroke-width="1" stroke-opacity=".4"/>
+      <path d="M191.6 138.7 A180 180 0 0 1 212.7 158.4 L183.2 185.4 A140 140 0 0 0 166.8 170.1 Z" fill="currentColor" fill-opacity=".10" stroke="currentColor" stroke-width="1" stroke-opacity=".4"/>
+      <path d="M212.7 158.4 A180 180 0 0 1 255.7 241 L216.7 249.7 A140 140 0 0 0 183.2 185.4 Z" fill="currentColor" fill-opacity=".22" stroke="currentColor" stroke-width="1" stroke-opacity=".4"/>
+      <path d="M255.7 241 A180 180 0 0 1 260 280 L220 280 A140 140 0 0 0 216.7 249.7 Z" fill="currentColor" fill-opacity=".55" stroke="currentColor" stroke-width="1" stroke-opacity=".4"/>
+      <!-- outer arc -->
+      <path d="M80 80 A200 200 0 0 1 280 280" fill="none" stroke="currentColor" stroke-width="2"/>
+      <!-- ticks -->
+      <g stroke="currentColor" stroke-width="1.5">
+        <line x1="80" y1="80" x2="80" y2="95"/>
+        <line x1="131.8" y1="86.8" x2="127.9" y2="101.3"/>
+        <line x1="170.8" y1="101.8" x2="164" y2="115.2"/>
+        <line x1="204" y1="123" x2="194.7" y2="134.8"/>
+        <line x1="227.5" y1="144.9" x2="216.4" y2="155"/>
+        <line x1="245.4" y1="167.6" x2="233" y2="176"/>
+        <line x1="269.8" y1="216.9" x2="255.5" y2="221.6"/>
+        <line x1="275.3" y1="236.7" x2="260.6" y2="240"/>
+        <line x1="279" y1="260.1" x2="264.1" y2="261.6"/>
+      </g>
+      <g class="lbl mono" font-size="12">
+        <text x="80" y="70" text-anchor="middle">0</text>
+        <text x="137" y="74" text-anchor="middle">.03</text>
+        <text x="182" y="88" text-anchor="middle">.10</text>
+        <text x="220" y="110">.21</text>
+        <text x="244" y="134">.34</text>
+        <text x="263" y="158">.50</text>
+        <text x="288" y="214">1.0</text>
+        <text x="292" y="236">1.33</text>
+        <text x="292" y="262">2.0</text>
+      </g>
+      <!-- zone labels -->
+      <g class="lbl" font-size="12">
+        <text x="96" y="182">bright</text>
+        <text x="132" y="208">light</text>
+        <text x="146" y="236">dark band</text>
+        <text x="172" y="270">black</text>
+      </g>
+      <!-- pointer at G = 0.55 -->
+      <line x1="80" y1="280" x2="240.9" y2="179" stroke="var(--accent)" stroke-width="2.5"/>
+      <circle cx="80" cy="280" r="7" class="acc"/>
+      <text x="14" y="34" class="sm">0° · parallel · full brightness</text>
+      <text x="300" y="300" text-anchor="middle" class="sm">90° · crossed · dark</text>
+    </svg>
+    </div>
+    <figcaption><b>Light through two polarizers falls as cos²(angle).</b> The dial needs only a quarter turn and never runs out of range. The marks bunch up toward dark, so the finest control is near white, where the White/Gray decision needs it most. The pointer shows the green reading from Fig. 2, <span class="mono">D 0.55</span>. Zones apply to the <i>brightest</i> of the three dials: below <span class="mono">0.21</span> can be White, past <span class="mono">0.34</span> is the darker band where Brown lives, past <span class="mono">1.33</span> is Black.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <span class="num">FIG 4 · FROM READINGS TO A NAME</span>
+  <h2>The order of the dials picks the hue</h2>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="-50 0 500 400" role="img" aria-label="Hue circle split into six 60-degree sectors, each labelled with the brightness order of the red, green and blue channels. Colour names sit around the rim. The centre says that if all three dials are within 0.03, the colour is White, Gray or Black.">
+      <circle cx="200" cy="200" r="150" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="200" cy="200" r="50" class="soft" stroke="currentColor" stroke-width="1.5"/>
+      <!-- sector lines -->
+      <g stroke="currentColor" stroke-width="1" opacity=".5">
+        <line x1="200" y1="150" x2="200" y2="50"/>
+        <line x1="243.3" y1="175" x2="329.9" y2="125"/>
+        <line x1="243.3" y1="225" x2="329.9" y2="275"/>
+        <line x1="200" y1="250" x2="200" y2="350"/>
+        <line x1="156.7" y1="225" x2="70.1" y2="275"/>
+        <line x1="156.7" y1="175" x2="70.1" y2="125"/>
+      </g>
+      <!-- name boundary ticks -->
+      <g stroke="currentColor" stroke-width="2">
+        <line x1="226" y1="52.3" x2="227.8" y2="42.4"/>
+        <line x1="238.8" y1="55.1" x2="241.4" y2="45.4"/>
+        <line x1="296.4" y1="85.1" x2="302.8" y2="77.4"/>
+        <line x1="314.9" y1="103.6" x2="322.6" y2="97.2"/>
+        <line x1="341" y1="148.7" x2="350.4" y2="145.3"/>
+        <line x1="275" y1="329.9" x2="280" y2="338.6"/>
+        <line x1="148.7" y1="341" x2="145.3" y2="350.4"/>
+        <line x1="85.1" y1="296.4" x2="77.4" y2="302.8"/>
+        <line x1="125" y1="70.1" x2="120" y2="61.4"/>
+      </g>
+      <!-- brightness order in each sector (brightest first) -->
+      <g class="lbl mono" font-size="12.5" text-anchor="middle">
+        <text x="260" y="100">R&gt;G&gt;B</text>
+        <text x="318" y="204">G&gt;R&gt;B</text>
+        <text x="260" y="308">G&gt;B&gt;R</text>
+        <text x="140" y="308">B&gt;G&gt;R</text>
+        <text x="82" y="204">B&gt;R&gt;G</text>
+        <text x="140" y="100">R&gt;B&gt;G</text>
+      </g>
+      <!-- names -->
+      <g class="lbl" font-weight="600">
+        <text x="200" y="24" text-anchor="middle">Red</text>
+        <text x="276" y="38">Orange</text>
+        <text x="346" y="98">Yellow</text>
+        <text x="366" y="264">Green</text>
+        <text x="215" y="384" text-anchor="middle">Cyan</text>
+        <text x="96" y="356" text-anchor="end">Blue</text>
+        <text x="24" y="174" text-anchor="end">Purple</text>
+      </g>
+      <text x="268" y="54" class="sm">Brown: 10–50°, dark</text>
+      <!-- centre -->
+      <g text-anchor="middle">
+        <text x="200" y="192" class="lbl" font-size="12">all within 0.03</text>
+        <text x="200" y="208" class="lbl" font-size="12" font-weight="600">White / Gray</text>
+        <text x="200" y="223" class="sm" font-size="11">by brightness</text>
+      </g>
+    </svg>
+    </div>
+    <figcaption><b>Three dials can be ranked six ways, and each ranking is one 60° slice of the hue circle.</b> "R&gt;G&gt;B" means red came back brightest, which is the <i>lowest</i> dial number. The ticks on the rim are the firmware's name boundaries. The finer split inside a slice (Orange vs Yellow, for example) comes from how far apart the readings are, which the lookup card handles.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <span class="num">WORKED EXAMPLE</span>
+  <h2>Orange paper, start to finish</h2>
+  <ol class="steps">
+    <li>Match all three fields (Fig. 2). Readings: R <span class="mono">0.05</span>, G <span class="mono">0.55</span>, B <span class="mono">1.35</span>.</li>
+    <li>Spread between brightest and dimmest is <span class="mono">1.30</span>, far above <span class="mono">0.03</span>. It has a hue.</li>
+    <li>Brightest is R at <span class="mono">0.05</span>, in the bright zone. Not Black, not Brown.</li>
+    <li>Order is R&gt;G&gt;B, the 0–60° slice: Red, Orange or Yellow.</li>
+    <li>G sits <span class="mono">0.50</span> below R. The card says that is about 27°, so the colour is <span class="result">Orange</span>.</li>
+  </ol>
+  <figure>
+    <div class="scroll">
+    <table>
+      <thead><tr><th>Lookup card, R&gt;G&gt;B slice</th><th>G minus R</th><th>Brightest dial</th><th>Name</th></tr></thead>
+      <tbody>
+        <tr><td>Near red edge</td><td class="r">over 1.3</td><td class="r">any</td><td>Red</td></tr>
+        <tr><td>Middle</td><td class="r">0.40 – 1.3</td><td class="r">under 0.34</td><td>Orange</td></tr>
+        <tr><td>Middle, dark</td><td class="r">0.40 – 1.3</td><td class="r">0.34 – 1.33</td><td>Brown</td></tr>
+        <tr><td>Near yellow edge</td><td class="r">under 0.40</td><td class="r">under 0.34</td><td>Yellow</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <figcaption><b>Sketch of one card row set, for strongly coloured objects.</b> The cut-offs shift for paler colours, so the real card will be generated from the firmware thresholds and tested on paper samples.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <span class="num">CONTEXT</span>
+  <h2>Three versions of the same job</h2>
+  <figure>
+    <div class="scroll">
+    <table>
+      <thead><tr><th></th><th>Measures light with</th><th>Decides the name with</th><th>Tells the user by</th></tr></thead>
+      <tbody>
+        <tr><td>MCU iWand (current)</td><td>GY-33 sensor module</td><td>ESP32-S3 firmware</td><td>Spoken name</td></tr>
+        <tr><td>Analog iWand</td><td>3 photodiodes + filters</td><td>Comparator network</td><td>Labelled LED position</td></tr>
+        <tr><td>Mechanical iWand</td><td>The eye, matching brightness</td><td>Dial order + lookup card</td><td>Printed name on the card</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </figure>
+</section>
+</div>
